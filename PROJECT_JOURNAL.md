@@ -40,7 +40,7 @@ judgement rather than a generic tutorial.
 
 ## Entry 2 — Data Schema Design
 
-**Date:** [today's date]
+**Date:** 1 October 2026
 
 Designed the data schema for the synthetic dataset, working through each
 churn-risk signal one at a time and deciding on raw fields rather than
@@ -75,7 +75,7 @@ on core + newly released features, add-on/module whitespace.
 
 ## Entry 3 — Full Churn-Risk Signal Schema
 
-**Date:** [today's date]
+**Date:** 1 October 2026
 
 Completed the full data schema for the synthetic dataset, working through
 all 9 churn-risk signal categories one at a time. Every field is grounded
@@ -130,3 +130,39 @@ call/email/document activity logging, and a defined retention cadence
 need to decide on customer count and how to keep generated data internally
 consistent (e.g. a high-risk customer shouldn't randomly also have a
 perfect NPS score).
+
+## Entry 4 — Data Generation Script (Signals 1–4)
+
+**Date:** 1 October 2026
+
+Started writing generate_data.py to produce the synthetic dataset. Used a
+4-archetype approach (healthy ~50%, at_risk ~30%, severely_at_risk ~15%,
+churned ~5%) to keep generated data internally consistent — e.g. a
+severely-at-risk customer shouldn't randomly get a perfect NPS score. Each
+archetype has a defined (and deliberately overlapping) value range per
+field, so the data looks believable rather than artificially clean-cut
+between categories.
+
+**Pattern established:** one function per signal (e.g.
+generate_usage_data, generate_support_data), taking archetype as input and
+returning that signal's values, then looped over all 300 customers and
+attached as DataFrame columns.
+
+**Signals completed:**
+
+1. Usage — logins across 3 periods, shows realistic trend direction
+2. Support tickets — volume, severity, open/resolved with derived (not
+   independently random) resolved count to avoid nonsensical totals
+3. Renewal/engagement — contract length, renewal countdown (negative =
+   overdue for churned customers), CS contact recency, retention cadence
+   compliance
+4. Satisfaction — NPS (-100 to 100) and CSAT (1-5), two different scales
+   used together realistically
+
+Ran a value_counts() sanity check early on — archetype split came out
+close to target (144/93/50/13 out of 300), confirming the weighted random
+assignment worked as expected.
+
+**Still to build:** Signals 5-9 (champion turnover, onboarding, staff
+training, feature training, whitespace/upsell), then export the dataset
+to CSV and move on to the scoring logic.
